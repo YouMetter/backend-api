@@ -5,6 +5,7 @@ import { pool } from './database/postgresql/pool.js';
 import cors from 'cors'
 import { apiPublic } from './routers/api-public.js';
 import errorMiddleware from './middlewares/errorMiddleware.js';
+import { api } from './routers/api.js';
 
 dotenv.config()
 
@@ -21,6 +22,7 @@ app.get('/', (req, res) => {
 })
 
 app.use(apiPublic);
+app.use(api);
 
 app.use(errorMiddleware)
 

@@ -31,8 +31,26 @@ const findUserByEmail = async (client, email) => {
     }
 }
 
+const createInterest = async (client, userId, categories) => {
+    if (client instanceof Client) {
+        const values = [userId]
+        const clause = []
+        for(let i = 1; i < categories.length + 1; i++) {
+            clause.push(`($1, $${i + 1})`)
+            values.push(categories[i-1])
+        }
+        const query = {
+            text: `INSERT INTO interest_users(user_id, category_id) VALUES ${clause.join(', ')}`,
+            values: values
+        }
+
+        await client.query(query);
+    }
+}
+
 export default {
     createUser,
     findUserByUsername,
-    findUserByEmail
+    findUserByEmail,
+    createInterest
 }

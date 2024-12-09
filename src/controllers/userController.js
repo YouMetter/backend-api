@@ -33,7 +33,25 @@ const login = async (req, res, next) => {
     }
 }
 
+const addInterest = async (req, res, next) => {
+    try {
+        const request = req.body
+        const user = req.user
+
+        await userService.addInterest(user.id, request.interest);
+
+        res.status(201).json({
+            success: true,
+            data: {},
+            message: 'berhasil menambahkan interest'
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
 export default {
     register,
-    login
+    login,
+    addInterest
 }

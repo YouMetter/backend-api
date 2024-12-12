@@ -12,7 +12,7 @@ const register = async (req, res, next) => {
         
     } catch (error) {
         next(error)
-    }
+    } 
 }
 
 const login = async (req, res, next) => {
@@ -50,8 +50,44 @@ const addInterest = async (req, res, next) => {
     }
 }
 
+const findUserById = async (req, res, next) => {
+  try {
+    const userId = req.params.id; // Ambil ID dari parameter URL
+    const user = await userService.findUserById(userId); // Panggil fungsi service
+  
+    res.status(200).json({
+      success: true,
+      data: user,
+      message: "User retrieved successfully",
+    });
+  } catch (error) {
+    next(error); // Teruskan error ke middleware handler
+  }
+};
+   
+const updateUserById = async (req, res, next) => {
+  try {
+    const userId = req.params.id; // Ambil ID dari parameter URL
+    const updateData = req.body; // Data pembaruan dari body request
+  
+    const updatedUser = await userService.updateUserById(userId, updateData); // Panggil fungsi service
+  
+    res.status(200).json({
+      success: true,
+      data: updatedUser,
+      message: 'User updated successfully',
+    });
+  } catch (error) {
+    next(error); // Teruskan error ke middleware handler
+  }
+};
+
+
+
 export default {
     register,
     login,
-    addInterest
+    addInterest,
+    findUserById,
+    updateUserById
 }

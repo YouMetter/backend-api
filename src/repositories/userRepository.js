@@ -2,6 +2,7 @@ import pg from "pg";
 const { Client } = pg;
 
 const createUser = async (client, user) => {
+    console.log(user);
     const query = {
         text: `INSERT INTO users(id, username, email, password, name) VALUES($1, $2, $3, $4, $5)`,
         values: [user.id, user.username, user.email, user.password, user.name]
@@ -31,6 +32,19 @@ const findUserByEmail = async (client, email) => {
     }
 }
 
+const findInterestByUserId = async (client, userId) => {
+    if(client instanceof Client) {
+        const query = {
+            text: `SELECT category_id FROM interest_users WHERE user_id = $1`,
+            values: [userId]
+        }
+
+        const result = await client.query(query);
+        console.log(result.rows);
+        return result.rows
+    }
+}
+
 const createInterest = async (client, userId, categories) => {
     if (client instanceof Client) {
         const values = [userId]
@@ -52,5 +66,6 @@ export default {
     createUser,
     findUserByUsername,
     findUserByEmail,
-    createInterest
+    createInterest,
+    findInterestByUserId
 }

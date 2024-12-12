@@ -31,6 +31,7 @@ const register = async (request) => {
     username: requestValid.username,
     email: requestValid.email,
     password: passwordHash,
+    name: requestValid.name
   };
 
   await userRepository.createUser(client, user);

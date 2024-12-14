@@ -6,7 +6,6 @@ import userRepository from "../repositories/userRepository.js"
 const getList = async (user) => {
     const client = await pool.connect()
     try {
-        console.log(user);
         const interets = await userRepository.findInterestByUserId(client, user.id);
         const interestValue = interets.map((interest) => interest.category_id)
         const result = await articleRepository.getList(client, interestValue)

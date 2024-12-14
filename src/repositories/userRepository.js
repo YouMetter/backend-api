@@ -2,7 +2,6 @@ import pg from "pg";
 const { Client } = pg;
 
 const createUser = async (client, user) => {
-    console.log(user);
     const query = {
         text: `INSERT INTO users(id, username, email, password, name) VALUES($1, $2, $3, $4, $5)`,
         values: [user.id, user.username, user.email, user.password, user.name]
@@ -40,7 +39,6 @@ const findInterestByUserId = async (client, userId) => {
         }
 
         const result = await client.query(query);
-        console.log(result.rows);
         return result.rows
     }
 }
@@ -76,8 +74,9 @@ const updateUserById = async (client, userId, userData) => {
     SET 
       username = $1,
       email = $2,
-      name = $3
-    WHERE id = $4
+      name = $3,
+      updated_at = $4
+    WHERE id = $5
     RETURNING *;
   `;
   
@@ -85,6 +84,7 @@ const updateUserById = async (client, userId, userData) => {
   const values = [
     userData.username,
     userData.email,
+    userData.name,
     userData.updated_at,
     userId,
   ];

@@ -44,9 +44,7 @@ const submittedTest = async (user, name, answers) => {
     const client = await pool.connect()
     try {
         await client.query('BEGIN')
-        console.log(name);
         const test = await testRepository.getTestByName(client,name)
-        console.log(test);
         if(!test) {
             throw new ResponseError(404, 'test tidak ditemukan')
         }
@@ -63,7 +61,6 @@ const submittedTest = async (user, name, answers) => {
             data.push({questionId : question.id, optionId: option.id})
         }
 
-        console.log(data);
         const submittedId = uuid()
         
         await testRepository.createSubmitTest(client, submittedId, user.id, test.id);
@@ -110,7 +107,6 @@ const getScoreTestBySubmittedId = async (user, name, submittedId) => {
             for(let j = 0; j < questions.length; j++) {
                 const answer = await testRepository.getAnswerByQuestionIdAndSubmmitedId(client, questions[j].id, submitted.id)
                 let isCorrect = false
-                console.log('ini jawaban', answer);
                 if (answer) {
                     const detailOption = await testRepository.getOptionByOptionIdAndQuestionId(client, answer.option_id, answer.question_id)
                     if(detailOption.name == questions[j].correctOption) {

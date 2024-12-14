@@ -50,32 +50,39 @@ const addInterest = async (req, res, next) => {
     }
 }
 
-const findUserById = async (req, res, next) => {
+const getCurrentUser = async (req, res, next) => {
   try {
-    const userId = req.params.id; // Ambil ID dari parameter URL
-    const user = await userService.findUserById(userId); // Panggil fungsi service
+    const user = req.user
+    const result = await userService.getCurrentUser(user)
   
     res.status(200).json({
       success: true,
-      data: user,
-      message: "User retrieved successfully",
+      data: {
+        id: result.id,
+        name: result.name || "",
+        username: result.username,
+        email: result.email,
+        profileImage: result.profile_image || "https://google.com/image",
+        createdAt: result.created_at
+      },
+      message: "berhasil mendapatkan data user",
     });
   } catch (error) {
     next(error); // Teruskan error ke middleware handler
   }
 };
    
-const updateUserById = async (req, res, next) => {
+const updateCurrentUser = async (req, res, next) => {
   try {
-    const userId = req.params.id; // Ambil ID dari parameter URL
+    const user = req.user;
     const updateData = req.body; // Data pembaruan dari body request
   
-    const updatedUser = await userService.updateUserById(userId, updateData); // Panggil fungsi service
+    await userService.updateCurrentUser(user, updateData); // Panggil fungsi service
   
     res.status(200).json({
       success: true,
-      data: updatedUser,
-      message: 'User updated successfully',
+      data: {},
+      message: 'user berhasil update profile',
     });
   } catch (error) {
     next(error); // Teruskan error ke middleware handler
@@ -88,6 +95,6 @@ export default {
     register,
     login,
     addInterest,
-    findUserById,
-    updateUserById
+    getCurrentUser,
+    updateCurrentUser
 }

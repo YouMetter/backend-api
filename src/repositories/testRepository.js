@@ -110,7 +110,6 @@ const getOptionByOptionIdAndQuestionId = async (client, optionId, questionId) =>
 
 const createAnswerQuestion = async (client, submittedId, answers) => {
     if(client instanceof Client ) {
-        console.log('ha', answers);
         const clause = [];
         const value = [];
         let index = 2
@@ -120,13 +119,11 @@ const createAnswerQuestion = async (client, submittedId, answers) => {
             value.push(answers[i-2].optionId)
             index = i + 2
         }
-        console.log(clause);
 
         const query = {
             text: `INSERT INTO answer_questions(submitted_id, question_id, option_id) VALUES ${clause.join(', ')}`,
             values: [submittedId, ...value]
         }
-        console.log(query);
 
         await client.query(query);
     }

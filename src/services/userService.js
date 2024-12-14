@@ -79,7 +79,6 @@ const addInterest = async (userId, request) => {
         }
         categories.push(categoryResult.id)
     }
-    console.log(categories);
     await userRepository.createInterest(client, userId, categories);
   } finally {
       await client.release();
@@ -87,21 +86,19 @@ const addInterest = async (userId, request) => {
 
 };
 
-const findUserById = async (userId) => {
+const getCurrentUser = async (user) => {
   const client = await pool.connect();
   try {
     // Query database untuk mendapatkan user berdasarkan ID
-    const user = await userRepository.findUserById(client, userId);
- 
+    const userCurrent = await userRepository.findUserById(client, user.id);
     // Jika user tidak ditemukan, lemparkan error
-    if (!user) {
-      throw new ResponseError(404, "User not found");
+    if (!userCurrent) {
+      throw new ResponseError(404, "user tidak ditemukan");
     }
  
     // Return data user
-    return user;
+    return userCurrent;
   } catch (error) {
-    console.error("Error in findUserById:", error);
     throw error; // Pastikan error diteruskan ke handler
   } finally {
     // Lepaskan koneksi database
@@ -109,28 +106,24 @@ const findUserById = async (userId) => {
   }
 };
  
-const updateUserById = async (userId, updateData) => {
+const updateCurrentUser = async (user, updateData) => {
   const client = await pool.connect();
   try {
     // Pastikan user dengan ID tersebut ada
-    const existingUser = await userRepository.findUserById(client, userId);
-    if (!existingUser) {
+    const userCurrent = await userRepository.findUserById(client, user.id);
+    if (!userCurrent) {
       throw new ResponseError(404, "User not found");
     }
  
     // Perbarui data pengguna
     const updatedUser = {
-      ...existingUser,
+      ...userCurrent,
       ...updateData,
       updated_at: new Date(), // Perbarui timestamp
     };
  
-    await userRepository.updateUserById(client, userId, updatedUser);
- 
-    // Return data user yang diperbarui
-    return updatedUser;
+    await userRepository.updateUserById(client, user.id, updatedUser);
   } catch (error) {
-    console.error("Error in updateUserById:", error);
     throw error; // Pastikan error diteruskan ke handler
   } finally {
     // Lepaskan koneksi database
@@ -142,6 +135,6 @@ export default {
   register,
   login,
   addInterest,
-  findUserById,
-  updateUserById
+  getCurrentUser,
+  updateCurrentUser
 };

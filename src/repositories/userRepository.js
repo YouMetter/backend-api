@@ -62,10 +62,44 @@ const createInterest = async (client, userId, categories) => {
     }
 }
 
+const findUserById = async (client, userId) => {
+  const result = await client.query("SELECT * FROM users WHERE id = $1", [
+    userId,
+  ]);
+  return result.rows[0]; // Ambil baris pertama (user), jika ada
+};
+  
+const updateUserById = async (client, userId, userData) => {
+  
+  const query = `
+    UPDATE users
+    SET 
+      username = $1,
+      email = $2,
+      name = $3
+    WHERE id = $4
+    RETURNING *;
+  `;
+  
+  
+  const values = [
+    userData.username,
+    userData.email,
+    userData.updated_at,
+    userId,
+  ];
+  
+  const result = await client.query(query, values);
+  
+  return result.rows[0]; // Kembalikan data pengguna yang diperbarui
+};
+
 export default {
     createUser,
     findUserByUsername,
     findUserByEmail,
     createInterest,
-    findInterestByUserId
+    findInterestByUserId,
+    findUserById,
+    updateUserById
 }

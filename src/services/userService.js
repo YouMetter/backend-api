@@ -87,8 +87,61 @@ const addInterest = async (userId, request) => {
 
 };
 
+const findUserById = async (userId) => {
+  const client = await pool.connect();
+  try {
+    // Query database untuk mendapatkan user berdasarkan ID
+    const user = await userRepository.findUserById(client, userId);
+ 
+    // Jika user tidak ditemukan, lemparkan error
+    if (!user) {
+      throw new ResponseError(404, "User not found");
+    }
+ 
+    // Return data user
+    return user;
+  } catch (error) {
+    console.error("Error in findUserById:", error);
+    throw error; // Pastikan error diteruskan ke handler
+  } finally {
+    // Lepaskan koneksi database
+    client.release();
+  }
+};
+ 
+const updateUserById = async (userId, updateData) => {
+  const client = await pool.connect();
+  try {
+    // Pastikan user dengan ID tersebut ada
+    const existingUser = await userRepository.findUserById(client, userId);
+    if (!existingUser) {
+      throw new ResponseError(404, "User not found");
+    }
+ 
+    // Perbarui data pengguna
+    const updatedUser = {
+      ...existingUser,
+      ...updateData,
+      updated_at: new Date(), // Perbarui timestamp
+    };
+ 
+    await userRepository.updateUserById(client, userId, updatedUser);
+ 
+    // Return data user yang diperbarui
+    return updatedUser;
+  } catch (error) {
+    console.error("Error in updateUserById:", error);
+    throw error; // Pastikan error diteruskan ke handler
+  } finally {
+    // Lepaskan koneksi database
+    client.release();
+  }
+};
+
 export default {
   register,
   login,
   addInterest,
+  findUserById,
+  updateUserById
 };

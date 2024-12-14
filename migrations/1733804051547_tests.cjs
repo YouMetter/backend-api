@@ -48,10 +48,11 @@ exports.up = (pgm) => {
     })
 
     pgm.createTable('answer_questions', {
-        id: { type: 'varchar(225)', notNull: true, primaryKey: true},
         option_id: { type: 'varchar(255)', notNull: true, references: 'option_question_tests', onDelete: 'CASCADE'},
         question_id: { type: 'varchar(255)', notNull: true, references: 'question_tests', onDelete: 'CASCADE'},
         submitted_id: { type: 'varchar(255)', notNull: true, references: 'submit_tests', onDelete: 'CASCADE'}
+    }, {
+        primaryKey: ['option_id', 'question_id', 'submitted_id']
     })
 
     pgm.createConstraint('question_tests', 'fk_question_tests_test_id', {
